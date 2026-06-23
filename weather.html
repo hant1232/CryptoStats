@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Calculators - Calculate Your Profits</title>
+    <title>CryptoStats - Calculate Your Profits</title>
     <style>
         * {
             margin: 0;
@@ -17,14 +17,14 @@
             --bg-card: #1a1a1a;
             --text-primary: #ffffff;
             --text-secondary: #a0a0a0;
-            --accent-primary: #00d4aa;
-            --accent-secondary: #7b61ff;
-            --accent-gradient: linear-gradient(135deg, #00d4aa 0%, #7b61ff 100%);
-            --positive: #00d4aa;
+            --accent-primary: #ffd700;
+            --accent-secondary: #ffed4e;
+            --accent-gradient: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            --positive: #ffd700;
             --negative: #ff4757;
             --border-color: #2a2a2a;
-            --glow-primary: rgba(0, 212, 170, 0.3);
-            --glow-secondary: rgba(123, 97, 255, 0.3);
+            --glow-primary: rgba(255, 215, 0, 0.3);
+            --glow-secondary: rgba(255, 237, 78, 0.3);
         }
 
         body {
@@ -33,6 +33,97 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Bitcoin Background */
+        .bitcoin-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bitcoin-logo {
+            position: absolute;
+            font-size: 4rem;
+            opacity: 0.08;
+            animation: float 8s ease-in-out infinite;
+            color: #ffd700;
+        }
+
+        .bitcoin-logo:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+            font-size: 3rem;
+        }
+
+        .bitcoin-logo:nth-child(2) {
+            top: 25%;
+            right: 15%;
+            animation-delay: 1s;
+            font-size: 3.5rem;
+        }
+
+        .bitcoin-logo:nth-child(3) {
+            top: 50%;
+            left: 5%;
+            animation-delay: 2s;
+            font-size: 4rem;
+        }
+
+        .bitcoin-logo:nth-child(4) {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 3s;
+            font-size: 3.5rem;
+        }
+
+        .bitcoin-logo:nth-child(5) {
+            top: 70%;
+            left: 50%;
+            animation-delay: 1.5s;
+            font-size: 3rem;
+        }
+
+        .bitcoin-logo:nth-child(6) {
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 2.5s;
+            font-size: 3.5rem;
+        }
+
+        .bitcoin-logo:nth-child(7) {
+            top: 35%;
+            right: 30%;
+            animation-delay: 0.5s;
+            font-size: 4rem;
+        }
+
+        .bitcoin-logo:nth-child(8) {
+            bottom: 30%;
+            right: 40%;
+            animation-delay: 3.5s;
+            font-size: 3rem;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+            50% {
+                transform: translateY(-50px) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-30px) rotate(-10deg);
+            }
         }
 
         /* Navigation */
@@ -108,6 +199,7 @@
             padding: 6rem 2rem 4rem;
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
 
         .hero::before {
@@ -121,6 +213,7 @@
             background: radial-gradient(circle, var(--glow-primary) 0%, transparent 70%);
             opacity: 0.3;
             animation: pulse 4s ease-in-out infinite;
+            z-index: 0;
         }
 
         .hero::after {
@@ -133,6 +226,7 @@
             background: radial-gradient(circle, var(--glow-secondary) 0%, transparent 70%);
             opacity: 0.2;
             animation: pulse 5s ease-in-out infinite reverse;
+            z-index: 0;
         }
 
         @keyframes pulse {
@@ -180,6 +274,8 @@
             padding: 5rem 2rem;
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .section-title {
@@ -300,7 +396,7 @@
             background: var(--accent-gradient);
             border: none;
             border-radius: 10px;
-            color: var(--bg-primary);
+            color: #000;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
@@ -372,6 +468,8 @@
             border-top: 1px solid var(--border-color);
             padding: 3rem 2rem;
             margin-top: 4rem;
+            position: relative;
+            z-index: 1;
         }
 
         .footer-content {
@@ -489,12 +587,24 @@
     </style>
 </head>
 <body>
+    <!-- Animated Bitcoin Background -->
+    <div class="bitcoin-bg">
+        <div class="bitcoin-logo">₿</div>
+        <div class="bitcoin-logo">₿</div>
+        <div class="bitcoin-logo">₿</div>
+        <div class="bitcoin-logo">₿</div>
+        <div class="bitcoin-logo">₿</div>
+        <div class="bitcoin-logo">₿</div>
+        <div class="bitcoin-logo">₿</div>
+        <div class="bitcoin-logo">₿</div>
+    </div>
+
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
             <div class="logo">
                 <span>📊</span>
-                <span>Investment Calculators</span>
+                <span>CryptoStats</span>
             </div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#calculators">Calculators</a></li>
@@ -512,7 +622,7 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Investment Calculators</h1>
+            <h1>CryptoStats</h1>
             <p>Calculate your profits from stocks, Bitcoin, and compound interest investments. Make informed financial decisions with our professional-grade tools.</p>
         </div>
     </section>
@@ -649,14 +759,14 @@
     <!-- Footer -->
     <footer>
         <div class="footer-content">
-            <div class="footer-logo">Investment Calculators</div>
+            <div class="footer-logo">CryptoStats</div>
             <div class="footer-links">
                 <a href="#calculators">Calculators</a>
                 <a href="#about">About</a>
                 <a href="#contact">Contact</a>
             </div>
             <div class="footer-copyright">
-                © 2024 Investment Calculators. All rights reserved.
+                © 2024 CryptoStats. All rights reserved.
             </div>
         </div>
     </footer>
