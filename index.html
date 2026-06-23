@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Stats - Track & Calculate Your Investments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-card: #1a1a1a;
+            --bg-card-hover: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-primary: #00d4aa;
+            --accent-secondary: #7b61ff;
+            --accent-gradient: linear-gradient(135deg, #00d4aa 0%, #7b61ff 100%);
+            --positive: #00d4aa;
+            --negative: #ff4757;
+            --border-color: #2a2a2a;
+            --glow-primary: rgba(0, 212, 170, 0.3);
+            --glow-secondary: rgba(123, 97, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-primary);
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--glow-primary) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            right: 20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--glow-secondary) 0%, transparent 70%);
+            opacity: 0.2;
+            animation: pulse 5s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.5; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .hero-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sections */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* Calculator Cards */
+        .calculators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .calculator-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 60px var(--glow-primary);
+        }
+
+        .calculator-card:hover::before {
+            opacity: 1;
+        }
+
+        .calculator-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .calculator-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .calculator-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px var(--glow-primary);
+        }
+
+        .input-group input::placeholder {
+            color: #555;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 10px;
+            color: var(--bg-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .calculate-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px var(--glow-primary);
+        }
+
+        .results {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .result-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .result-value.positive {
+            color: var(--positive);
+        }
+
+        .result-value.negative {
+            color: var(--negative);
+        }
+
+        /* Crypto Market Section */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .crypto-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .crypto-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .crypto-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .crypto-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .crypto-logo.btc { background: linear-gradient(135deg, #f7931a, #ffb84d); }
+        .crypto-logo.eth { background: linear-gradient(135deg, #627eea, #8b9ff0); }
+        .crypto-logo.sol { background: linear-gradient(135deg, #9945ff, #14f195); }
+        .crypto-logo.xrp { background: linear-gradient(135deg, #23292f, #4a5568); }
+
+        .crypto-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .crypto-info span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .crypto-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .crypto-price-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .crypto-change {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+        }
+
+        .crypto-change.positive {
+            background: rgba(0, 212, 170, 0.15);
+            color: var(--positive);
+        }
+
+        .crypto-change.negative {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--negative);
+        }
+
+        .crypto-chart {
+            height: 60px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+        }
+
+        .crypto-chart span {
+            flex: 1;
+            background: var(--accent-gradient);
+            border-radius: 2px 2px 0 0;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .crypto-card:hover .crypto-chart span {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-primary);
+        }
+
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-secondary);
+                flex-direction: column;
+                padding: 1rem 2rem;
+                gap: 1rem;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .hero {
+                padding: 8rem 1.5rem 4rem;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .section {
+                padding: 3rem 1.5rem;
+            }
+
+            .calculators-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .calculator-card {
+                padding: 1.5rem;
+            }
+
+            .crypto-price-value {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Crypto Stats</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#calculators">Calculators</a></li>
+                <li><a href="#market">Market</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <div class="mobile-menu" id="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Crypto Stats</h1>
+            <p>Track profits, calculate investments, and grow your portfolio with professional-grade financial tools.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">$2.4T</div>
+                    <div class="hero-stat-label">Market Cap</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">24/7</div>
+                    <div class="hero-stat-label">Live Data</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">100%</div>
+                    <div class="hero-stat-label">Free Tools</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculators Section -->
+    <section class="section" id="calculators">
+        <h2 class="section-title">Investment Calculators</h2>
+        <p class="section-subtitle">Powerful tools to analyze your investments and maximize returns</p>
+        
+        <div class="calculators-grid">
+            <!-- Stock Profit Calculator -->
+            <div class="calculator-card">
+                <div class="calculator-header">
+                    <div class="calculator-icon">📈</div>
+                    <h3 class="calculator-title">Stock Profit Calculator</h3>
+                </div>
+                <div class="input-group">
+                    <label>Investment Amount ($)</label>
+                    <input type="number" id="stockInvestment" placeholder="10000">
+                </div>
+                <div class="input-group">
+                    <label>Buy Price ($)</label>
+                    <input type="number" id="stockBuyPrice" placeholder="100">
+                </div>
+                <div class="input-group">
+                    <label>Sell Price ($)</label>
+                    <input type="number" id="stockSellPrice" placeholder="150">
+                </div>
+                <button class="calculate-btn" onclick="calculateStock()">Calculate Profit</button>
+                <div class="results" id="stockResults" style="display: none;">
+                    <div class="result-item">
+                        <span class="result-label">Profit / Loss</span>
+                        <span class="result-value" id="stockProfit">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Percentage Return</span>
+                        <span class="result-value" id="stockPercent">0%</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Final Portfolio Value</span>
+                        <span class="result-value" id="stockFinal">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bitcoin Profit Calculator -->
+            <div class="calculator-card">
+                <div class="calculator-header">
+                    <div class="calculator-icon">₿</div>
+                    <h3 class="calculator-title">Bitcoin Profit Calculator</h3>
+                </div>
+                <div class="input-group">
+                    <label>Investment Amount ($)</label>
+                    <input type="number" id="btcInvestment" placeholder="5000">
+                </div>
+                <div class="input-group">
+                    <label>Bitcoin Buy Price ($)</label>
+                    <input type="number" id="btcBuyPrice" placeholder="40000">
+                </div>
+                <div class="input-group">
+                    <label>Bitcoin Sell Price ($)</label>
+                    <input type="number" id="btcSellPrice" placeholder="60000">
+                </div>
+                <button class="calculate-btn" onclick="calculateBitcoin()">Calculate Profit</button>
+                <div class="results" id="btcResults" style="display: none;">
+                    <div class="result-item">
+                        <span class="result-label">Profit / Loss</span>
+                        <span class="result-value" id="btcProfit">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Percentage Return</span>
+                        <span class="result-value" id="btcPercent">0%</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Final Value</span>
+                        <span class="result-value" id="btcFinal">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compound Interest Calculator -->
+            <div class="calculator-card">
+                <div class="calculator-header">
+                    <div class="calculator-icon">💰</div>
+                    <h3 class="calculator-title">Compound Interest Calculator</h3>
+                </div>
+                <div class="input-group">
+                    <label>Initial Investment ($)</label>
+                    <input type="number" id="compoundInitial" placeholder="10000">
+                </div>
+                <div class="input-group">
+                    <label>Monthly Contribution ($)</label>
+                    <input type="number" id="compoundMonthly" placeholder="500">
+                </div>
+                <div class="input-group">
+                    <label>Monthly Return (%)</label>
+                    <input type="number" id="compoundReturn" placeholder="2" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Investment Duration (Months)</label>
+                    <input type="number" id="compoundDuration" placeholder="24">
+                </div>
+                <button class="calculate-btn" onclick="calculateCompound()">Calculate Growth</button>
+                <div class="results" id="compoundResults" style="display: none;">
+                    <div class="result-item">
+                        <span class="result-label">Final Portfolio Value</span>
+                        <span class="result-value" id="compoundFinal">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Profit</span>
+                        <span class="result-value" id="compoundProfit">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Crypto Market Section -->
+    <section class="section" id="market">
+        <h2 class="section-title">Crypto Market</h2>
+        <p class="section-subtitle">Live prices and market data for top cryptocurrencies</p>
+        
+        <div class="market-grid">
+            <!-- Bitcoin -->
+            <div class="crypto-card">
+                <div class="crypto-header">
+                    <div class="crypto-logo btc">₿</div>
+                    <div class="crypto-info">
+                        <h3>Bitcoin</h3>
+                        <span>BTC</span>
+                    </div>
+                </div>
+                <div class="crypto-price">
+                    <span class="crypto-price-value">$67,432.18</span>
+                    <span class="crypto-change positive">+3.24%</span>
+                </div>
+                <div class="crypto-chart">
+                    <span style="height: 45%"></span>
+                    <span style="height: 52%"></span>
+                    <span style="height: 48%"></span>
+                    <span style="height: 55%"></span>
+                    <span style="height: 60%"></span>
+                    <span style="height: 58%"></span>
+                    <span style="height: 65%"></span>
+                    <span style="height: 70%"></span>
+                    <span style="height: 68%"></span>
+                    <span style="height: 75%"></span>
+                    <span style="height: 72%"></span>
+                    <span style="height: 80%"></span>
+                </div>
+            </div>
+
+            <!-- Ethereum -->
+            <div class="crypto-card">
+                <div class="crypto-header">
+                    <div class="crypto-logo eth">Ξ</div>
+                    <div class="crypto-info">
+                        <h3>Ethereum</h3>
+                        <span>ETH</span>
+                    </div>
+                </div>
+                <div class="crypto-price">
+                    <span class="crypto-price-value">$3,521.84</span>
+                    <span class="crypto-change positive">+2.18%</span>
+                </div>
+                <div class="crypto-chart">
+                    <span style="height: 50%"></span>
+                    <span style="height: 48%"></span>
+                    <span style="height: 55%"></span>
+                    <span style="height: 52%"></span>
+                    <span style="height: 58%"></span>
+                    <span style="height: 62%"></span>
+                    <span style="height: 60%"></span>
+                    <span style="height: 65%"></span>
+                    <span style="height: 70%"></span>
+                    <span style="height: 68%"></span>
+                    <span style="height: 72%"></span>
+                    <span style="height: 75%"></span>
+                </div>
+            </div>
+
+            <!-- Solana -->
+            <div class="crypto-card">
+                <div class="crypto-header">
+                    <div class="crypto-logo sol">◎</div>
+                    <div class="crypto-info">
+                        <h3>Solana</h3>
+                        <span>SOL</span>
+                    </div>
+                </div>
+                <div class="crypto-price">
+                    <span class="crypto-price-value">$142.67</span>
+                    <span class="crypto-change negative">-1.42%</span>
+                </div>
+                <div class="crypto-chart">
+                    <span style="height: 70%"></span>
+                    <span style="height: 68%"></span>
+                    <span style="height: 65%"></span>
+                    <span style="height: 62%"></span>
+                    <span style="height: 58%"></span>
+                    <span style="height: 60%"></span>
+                    <span style="height: 55%"></span>
+                    <span style="height: 52%"></span>
+                    <span style="height: 50%"></span>
+                    <span style="height: 48%"></span>
+                    <span style="height: 52%"></span>
+                    <span style="height: 50%"></span>
+                </div>
+            </div>
+
+            <!-- XRP -->
+            <div class="crypto-card">
+                <div class="crypto-header">
+                    <div class="crypto-logo xrp">✕</div>
+                    <div class="crypto-info">
+                        <h3>XRP</h3>
+                        <span>XRP</span>
+                    </div>
+                </div>
+                <div class="crypto-price">
+                    <span class="crypto-price-value">$0.5234</span>
+                    <span class="crypto-change positive">+5.67%</span>
+                </div>
+                <div class="crypto-chart">
+                    <span style="height: 35%"></span>
+                    <span style="height: 40%"></span>
+                    <span style="height: 45%"></span>
+                    <span style="height: 50%"></span>
+                    <span style="height: 55%"></span>
+                    <span style="height: 60%"></span>
+                    <span style="height: 65%"></span>
+                    <span style="height: 70%"></span>
+                    <span style="height: 75%"></span>
+                    <span style="height: 80%"></span>
+                    <span style="height: 85%"></span>
+                    <span style="height: 90%"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Crypto Stats</div>
+            <div class="footer-links">
+                <a href="#calculators">Calculators</a>
+                <a href="#market">Market</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-copyright">
+                © 2024 Crypto Stats. All rights reserved. Modern Financial Analytics.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+
+        // Format percentage
+        function formatPercent(value) {
+            const sign = value >= 0 ? '+' : '';
+            return `${sign}${value.toFixed(2)}%`;
+        }
+
+        // Stock Profit Calculator
+        function calculateStock() {
+            const investment = parseFloat(document.getElementById('stockInvestment').value) || 0;
+            const buyPrice = parseFloat(document.getElementById('stockBuyPrice').value) || 0;
+            const sellPrice = parseFloat(document.getElementById('stockSellPrice').value) || 0;
+
+            if (investment <= 0 || buyPrice <= 0) {
+                alert('Please enter valid positive numbers');
+                return;
+            }
+
+            const shares = investment / buyPrice;
+            const finalValue = shares * sellPrice;
+            const profit = finalValue - investment;
+            const percentReturn = ((sellPrice - buyPrice) / buyPrice) * 100;
+
+            const profitEl = document.getElementById('stockProfit');
+            const percentEl = document.getElementById('stockPercent');
+            
+            profitEl.textContent = formatCurrency(profit);
+            profitEl.className = `result-value ${profit >= 0 ? 'positive' : 'negative'}`;
+            
+            percentEl.textContent = formatPercent(percentReturn);
+            percentEl.className = `result-value ${percentReturn >= 0 ? 'positive' : 'negative'}`;
+            
+            document.getElementById('stockFinal').textContent = formatCurrency(finalValue);
+            document.getElementById('stockResults').style.display = 'block';
+        }
+
+        // Bitcoin Profit Calculator
+        function calculateBitcoin() {
+            const investment = parseFloat(document.getElementById('btcInvestment').value) || 0;
+            const buyPrice = parseFloat(document.getElementById('btcBuyPrice').value) || 0;
+            const sellPrice = parseFloat(document.getElementById('btcSellPrice').value) || 0;
+
+            if (investment <= 0 || buyPrice <= 0) {
+                alert('Please enter valid positive numbers');
+                return;
+            }
+
+            const btcAmount = investment / buyPrice;
+            const finalValue = btcAmount * sellPrice;
+            const profit = finalValue - investment;
+            const percentReturn = ((sellPrice - buyPrice) / buyPrice) * 100;
+
+            const profitEl = document.getElementById('btcProfit');
+            const percentEl = document.getElementById('btcPercent');
+            
+            profitEl.textContent = formatCurrency(profit);
+            profitEl.className = `result-value ${profit >= 0 ? 'positive' : 'negative'}`;
+            
+            percentEl.textContent = formatPercent(percentReturn);
+            percentEl.className = `result-value ${percentReturn >= 0 ? 'positive' : 'negative'}`;
+            
+            document.getElementById('btcFinal').textContent = formatCurrency(finalValue);
+            document.getElementById('btcResults').style.display = 'block';
+        }
+
+        // Compound Interest Calculator
+        function calculateCompound() {
+            const initial = parseFloat(document.getElementById('compoundInitial').value) || 0;
+            const monthly = parseFloat(document.getElementById('compoundMonthly').value) || 0;
+            const returnRate = parseFloat(document.getElementById('compoundReturn').value) / 100 || 0;
+            const duration = parseInt(document.getElementById('compoundDuration').value) || 0;
+
+            if (duration <= 0) {
+                alert('Please enter a valid duration');
+                return;
+            }
+
+            let balance = initial;
+            const totalContributions = initial + (monthly * duration);
+
+            for (let i = 0; i < duration; i++) {
+                balance = balance * (1 + returnRate) + monthly;
+            }
+
+            const profit = balance - totalContributions;
+
+            const finalEl = document.getElementById('compoundFinal');
+            const profitEl = document.getElementById('compoundProfit');
+            
+            finalEl.textContent = formatCurrency(balance);
+            finalEl.className = 'result-value positive';
+            
+            profitEl.textContent = formatCurrency(profit);
+            profitEl.className = `result-value ${profit >= 0 ? 'positive' : 'negative'}`;
+            
+            document.getElementById('compoundResults').style.display = 'block';
+        }
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    navLinks.classList.remove('active');
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.calculator-card, .crypto-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
